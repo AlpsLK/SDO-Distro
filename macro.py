@@ -131,12 +131,11 @@ def detect_service_name(current_folder: Path) -> str:
 
 def finalize_outputs(service: str, service_results_dir: Path, excel_files: list):
     """
-    Month-aware finalize:
-      working structure: Zips_Archive/working_json/YYYY-MM/<service>-results
-      final structure:
-        Zips_Archive/json/YYYY-MM/<service>-results
-        Zips_Archive/excell/YYYY-MM/<service>/*.xlsx
-        Zips_Archive/zip/YYYY-MM/<service>.zip
+    Move xlsx files and create zip archive.
+    JSON results are already written to Zips_Archive/json/YYYY-MM/<service>-results.
+    This function creates:
+      Zips_Archive/excell/YYYY-MM/<service>/*.xlsx
+      Zips_Archive/zip/YYYY-MM/<service>.zip
     """
     # Zips_Archive
     try:
@@ -169,16 +168,7 @@ def finalize_outputs(service: str, service_results_dir: Path, excel_files: list)
                 zf.write(full, arcname=rel)
 
     print(f"ZIP CREATED -> {zip_path.name}")
-
-    dest_json_folder = json_dir / service_results_dir.name
-    if dest_json_folder.exists() and dest_json_folder != service_results_dir:
-        shutil.rmtree(dest_json_folder)
-
-    if dest_json_folder != service_results_dir:
-        shutil.move(str(service_results_dir), dest_json_folder)
-        print(f"MOVED JSON RESULTS -> {dest_json_folder}")
-    else:
-        print(f"JSON RESULTS already under {dest_json_folder}")
+    print(f"JSON RESULTS at {service_results_dir}")
 
 
 def main():
